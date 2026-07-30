@@ -39,6 +39,12 @@ cp "$BIN" "$CONTENTS/MacOS/Shark"
 # независима, и ссылка `shark` затёрла бы сам `Shark`.
 mkdir -p "$CONTENTS/Helpers"
 ln -sf ../MacOS/Shark "$CONTENTS/Helpers/shark"
+
+# Страница руководства лежит в бандле по стандартной раскладке man,
+# поэтому её можно и показать напрямую (`shark man`), и подключить
+# в системный путь одной ссылкой.
+mkdir -p "$CONTENTS/Resources/man/man1"
+cp "$ROOT/Resources/shark.1" "$CONTENTS/Resources/man/man1/shark.1"
 cp "$ROOT/Resources/Info.plist" "$CONTENTS/Info.plist"
 
 # Пустых .lproj достаточно, чтобы AppKit перевёл стандартные меню:
