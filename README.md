@@ -2,7 +2,17 @@
 
 A native macOS file converter and video downloader, written in SwiftUI with a Liquid Glass interface.
 
+**Converts almost anything into almost anything.** Around 120 output formats across audio, video, images and documents, and far more on input — including camera RAW, Photoshop files and legacy office documents. Drop a mixed pile of files in at once: each one is routed to a sensible target on its own.
+
 Everything runs locally. The finished `.app` carries its engines inside — no ffmpeg, no Python, no Homebrew required on the machine that runs it.
+
+![Converter](docs/converter.png)
+
+A mixed queue converts in one pass: video and audio to MP4, a Markdown report to PDF, artwork to JPG. Picking a format applies it only where it makes sense — choosing MP4 will not turn your documents into video.
+
+![Downloader](docs/downloader.png)
+
+Paste a link and the source is checked before you commit to it: platform, title and duration, or the reason it will not work.
 
 ## Build
 
@@ -26,26 +36,45 @@ Quick run without bundling: `swift run`.
 
 **Requirements:** Swift 6 — Command Line Tools are enough, Xcode is not needed.
 
-## Converting
+## Converting almost any format
 
-| Category | Engine | Formats |
+Four engines sit behind one queue, and the right one is picked automatically from the pair of input and output formats. You never choose an engine — you choose a result.
+
+**Audio → 15 formats**
+`mp3` `m4a` `aac` `wav` `flac` `alac` `ogg` `opus` `wma` `aiff` `ac3` `amr` `caf` `mka` `mp2`
+
+**Video → 15 formats**
+`mp4` `mkv` `mov` `webm` `avi` `m4v` `flv` `wmv` `mpg` `mpeg` `ts` `ogv` `3gp` `ProRes` `gif`
+
+**Images → 13 formats**
+`jpg` `png` `heic` `webp` `tiff` `gif` `bmp` `avif` `jp2` `ico` `tga` `ppm` `pdf`
+
+**Documents → 8 formats**
+`pdf` `docx` `rtf` `html` `txt` `md` `png` `jpg`
+
+Input accepts considerably more than output. Roughly 150 extensions are recognised, including things most converters refuse:
+
+- **Camera RAW** — `cr2` `cr3` `nef` `arw` `dng` `orf` `rw2` `raf` `pef` `sr2`
+- **Photoshop and friends** — `psd` `exr` `hdr` `dds` `jxl` `icns`
+- **Legacy and office** — `doc` `docx` `odt` `rtfd` `webarchive` `epub`
+- **Broadcast and DVD video** — `mxf` `dv` `vob` `m2ts` `mts` `y4m` `gxf`
+- **Lossless and exotic audio** — `ape` `wv` `tta` `shn` `mpc` `dts` `aax`
+
+### Cross-category routes
+
+The interesting part is converting *between* categories, which most tools will not do at all:
+
+| From | To | How |
 |---|---|---|
-| Audio | ffmpeg | mp3, m4a, aac, wav, flac, alac, ogg, opus, wma, aiff, ac3, amr, caf, mp2 |
-| Video | ffmpeg | mp4, mkv, mov, webm, avi, m4v, flv, wmv, mpg, ts, ogv, 3gp, ProRes, gif |
-| Images | ImageIO, ffmpeg as fallback | jpg, png, heic, webp, tiff, gif, bmp, avif, jp2, ico, tga, ppm — plus RAW and psd on input |
-| Documents | NSAttributedString, PDFKit, CoreText | pdf, docx, rtf, html, txt, md |
+| any video | mp3, m4a, flac … | audio extracted and re-encoded |
+| any video | gif | palette generated per clip, so gradients stay clean |
+| images | pdf | PDFKit |
+| pdf | png, jpg, tiff | rasterised page by page — `name-01.png`, `name-02.png`, … |
+| pdf | txt, rtf, html | text layer extracted |
+| doc, docx, odt, html, md, txt | pdf, docx, rtf, html, txt, md | any-to-any across document formats |
+| audio | mp4, mkv, mov | wrapped as a video container |
 
-Routing is automatic: the engine is chosen from the pair of input and output formats.
-
-Notable routes:
-
-- images → **pdf** (PDFKit);
-- **pdf** → png/jpg/tiff, page by page — a multi-page PDF yields `name-01.png`, `name-02.png`, …;
-- **pdf** → txt / rtf / html;
-- doc, docx, odt, rtf, html, md, txt → pdf / docx / rtf / html / txt / md;
-- video → gif with palette generation, so gradients stay clean.
-
-Settings: video quality (CRF preset), resolution cap, audio bitrate, JPEG/HEIC quality, metadata stripping, output folder, per-file output name.
+Options: video quality (CRF preset), resolution cap, audio bitrate, JPEG/HEIC quality, metadata stripping, output folder, and a per-file output name you can edit before or after the conversion.
 
 `.ico` is written by hand rather than by an engine. ImageIO does not list `com.microsoft.ico` among the types it can write, and the ffmpeg ICO muxer only accepts a narrow set of sizes and pixel formats — it fails on an ordinary JPEG. The built-in writer embeds a full set of sizes (16 … 256) as PNG payloads, which is what Windows expects.
 

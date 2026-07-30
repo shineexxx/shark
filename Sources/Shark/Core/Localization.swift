@@ -137,6 +137,7 @@ enum Localization {
         "Needed for private, age-restricted and account-only videos.":
             "Нужны для приватных, возрастных и доступных только по аккаунту видео.",
         "No cookies": "Без cookies",
+        "VK Video": "VK Видео",
         "macOS blocks access to Safari cookies. Grant Full Disk Access to Shark, or pick Firefox, or choose a cookies.txt file.":
             "macOS не пускает к cookies Safari. Дайте Shark полный доступ к диску, либо выберите Firefox, либо укажите файл cookies.txt.",
         "Browser cookies not found. Make sure that browser is installed and you are signed in.":

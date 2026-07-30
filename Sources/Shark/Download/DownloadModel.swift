@@ -253,7 +253,7 @@ final class DownloadModel: ObservableObject {
     static let knownHosts: [(name: String, symbol: String, match: [String])] = [
         ("YouTube", "play.rectangle.fill", ["youtube.com", "youtu.be", "youtube-nocookie.com"]),
         ("RuTube", "r.square.fill", ["rutube.ru"]),
-        ("VK Видео", "v.square.fill", ["vk.com", "vkvideo.ru", "vk.ru", "m.vk.com"]),
+        (L("VK Video"), "v.square.fill", ["vk.com", "vkvideo.ru", "vk.ru", "m.vk.com"]),
         ("TikTok", "music.note", ["tiktok.com", "vm.tiktok.com"])
     ]
 
