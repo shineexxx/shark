@@ -1,0 +1,16 @@
+# Build artefacts
+.build/
+build/
+*.xcodeproj
+*.xcworkspace
+.swiftpm/
+
+# Bundled engines — fetched by Scripts/fetch-tools.sh, ~200 MB, never committed
+Tools/
+
+# Generated icon — drawn by the app itself during the build
+Resources/AppIcon.icns
+Resources/AppIcon.png
+
+# macOS
+.DS_Store
