@@ -90,9 +90,34 @@ Options: video quality (CRF preset), resolution cap, audio bitrate, JPEG/HEIC qu
 
 If the menu bar icon is not visible, a menu bar manager (Ice, Bartender and friends) is hiding it, or the notch pushed it off. The item is created and working either way; it has an `autosaveName`, so once dragged into place with Cmd held, its position sticks.
 
-## Downloading
+## Downloading from 1,700+ sources
 
-The engine is yt-dlp, which ships extractors for a very large number of sites — YouTube, RuTube, VK Video, TikTok and many others. Shark contains no per-site code; every link goes through the same call.
+The engine is yt-dlp, and the copy bundled with Shark ships **1,752 extractors** — that is the number the binary itself reports, not a marketing round-up:
+
+```bash
+shark --list-sources          # all 1,752
+shark sources youtube         # 21 of them handle YouTube alone
+```
+
+An extractor is the parsing code for one site: where the stream URLs hide on the page, which qualities exist, where the title and thumbnail live. A single site usually needs several — one for a video, one for a playlist, one for a channel — so the count of distinct services is smaller than 1,752, but still in the many hundreds.
+
+What that covers, sampled from the real list:
+
+| | |
+|---|---|
+| **Video hosting** | YouTube, Vimeo, Dailymotion, RuTube, VK Video, Twitch |
+| **Social** | Instagram (stories and tags too), Facebook (including Reels), Twitter, Reddit, TikTok |
+| **Music** | SoundCloud, Bandcamp — albums and artist pages included |
+| **Broadcasters** | BBC with iPlayer, ARTE, and dozens of public broadcasters across Europe and Asia |
+| **Learning and subscriptions** | Coursera, TED, Nebula, Patreon |
+
+The rest of the list is news sites, podcast platforms, sports services, archives, university video libraries and regional hosts from all over the world — most of the 1,752 are niche names you have never heard of.
+
+Shark contains **no per-site code**. Every link goes through the same call, and yt-dlp picks the extractor by domain. When nothing matches, a generic extractor still tries to find media on the page — so a link can work even if its site is not on any list.
+
+The flip side: extractors break. Sites change their markup, and a given one can stop working until yt-dlp is updated. The list marks known breakage — `instagram:user` was flagged as broken when this was written. That is exactly why Settings has a one-click yt-dlp update.
+
+### Options
 
 - Video capped at 480p … 2160p or "best", in mp4 / mkv / webm.
 - Audio only: mp3, m4a, opus, flac, wav.
@@ -138,6 +163,7 @@ shark convert doc.docx --to pdf --name report
 shark download <url> --quality 1080
 shark download <url> --audio mp3 --cookies firefox
 shark formats
+shark sources youtube
 shark info clip.mov
 shark help
 ```
