@@ -76,7 +76,8 @@ final class ConvertModel: ObservableObject {
         var seen = Set(jobs.map(\.source.standardizedFileURL))
         for url in files where !seen.contains(url.standardizedFileURL) {
             seen.insert(url.standardizedFileURL)
-            var job = ConvertJob(source: url, target: target)
+            var job = ConvertJob(source: url,
+                                 target: defaultTarget(for: Formats.kind(of: url), source: url))
             job.byteSize = (try? FileManager.default.attributesOfItem(atPath: url.path)[.size] as? Int64) ?? nil
             jobs.append(job)
         }
@@ -191,9 +192,20 @@ final class ConvertModel: ObservableObject {
         jobs.removeAll { $0.state.isFinished }
     }
 
+    /// Разносит выбранный формат по очереди — но только туда, где он осмыслен.
+    ///
+    /// Общий формат на всю очередь ломался на смешанном наборе: выбрав mp4,
+    /// пользователь получал документ и картинку «в mp4». Поэтому формат
+    /// применяется к файлу, только если он вообще предлагается для его типа;
+    /// остальные сохраняют разумное значение по своему типу.
     func syncTargets() {
         for index in jobs.indices where !jobs[index].state.isFinished {
-            jobs[index].target = target
+            let kind = jobs[index].kind
+            if Formats.targets(for: kind).contains(where: { $0.1.contains(target) }) {
+                jobs[index].target = target
+            } else {
+                jobs[index].target = defaultTarget(for: kind, source: jobs[index].source)
+            }
         }
     }
 
@@ -220,6 +232,19 @@ final class ConvertModel: ObservableObject {
         case .image: return "png"
         case .document: return "pdf"
         default: return "mp4"
+        }
+    }
+
+    /// То же, но без предложения превратить файл в самого себя.
+    func defaultTarget(for kind: FileKind, source: URL) -> String {
+        let target = defaultTarget(for: kind)
+        guard target == source.pathExtension.lowercased() else { return target }
+        switch kind {
+        case .audio: return "m4a"
+        case .video: return "mkv"
+        case .image: return "jpg"
+        case .document: return "docx"
+        default: return target
         }
     }
 
