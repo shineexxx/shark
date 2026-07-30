@@ -31,6 +31,18 @@ enum Tools {
         }
     }
 
+    /// Папка Contents внутри .app, вычисленная от настоящего бинарника.
+    ///
+    /// Через символическую ссылку (например, /usr/local/bin/shark) Bundle.main
+    /// указывает на папку ссылки, а не на приложение, — поэтому путь надо
+    /// разворачивать вручную, иначе CLI не находит ни движки, ни руководство.
+    static var bundleContents: URL? {
+        guard let executable = Bundle.main.executableURL?.resolvingSymlinksInPath() else { return nil }
+        // .../Shark.app/Contents/MacOS/Shark → .../Shark.app/Contents
+        let contents = executable.deletingLastPathComponent().deletingLastPathComponent()
+        return contents.lastPathComponent == "Contents" ? contents : nil
+    }
+
     /// Куда складываем инструменты, если их подкачали уже после установки приложения.
     static var supportDirectory: URL {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -63,6 +75,11 @@ enum Tools {
             let contents = exeDir.deletingLastPathComponent()
             candidates.append(contents.appendingPathComponent("Resources/Tools/\(kind.fileName)"))
             candidates.append(contents.appendingPathComponent("Resources/\(kind.fileName)"))
+        }
+        // 3b. Через символическую ссылку путь до приложения известен только
+        //     после разворачивания — этот случай самый частый для CLI.
+        if let contents = bundleContents {
+            candidates.append(contents.appendingPathComponent("Resources/Tools/\(kind.fileName)"))
         }
         // 4. Системные пути — как последний резерв.
         candidates += systemSearchPaths.map { URL(fileURLWithPath: $0).appendingPathComponent(kind.fileName) }

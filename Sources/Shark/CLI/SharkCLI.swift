@@ -242,6 +242,9 @@ enum SharkCLI {
     /// работал сразу, не требуя установки в системный путь через sudo.
     private static func manual() async -> Int32 {
         let candidates = [
+            // Через ссылку вроде /usr/local/bin/shark это единственный
+            // работающий путь: Bundle.main указывает на папку ссылки.
+            Tools.bundleContents?.appendingPathComponent("Resources/man/man1/shark.1"),
             Bundle.main.resourceURL?.appendingPathComponent("man/man1/shark.1"),
             Bundle.main.executableURL?.deletingLastPathComponent()
                 .deletingLastPathComponent()
