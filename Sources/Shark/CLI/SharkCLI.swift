@@ -8,14 +8,14 @@ import AppKit
 @MainActor
 enum SharkCLI {
 
-    static let commands = ["convert", "download", "formats", "info", "help", "version"]
+    static let commands = ["convert", "download", "formats", "sources", "info", "help", "version"]
 
     /// Запускать ли терминальный режим: по имени вызова или по первому аргументу.
     static func shouldRun(_ arguments: [String]) -> Bool {
         let invokedAs = URL(fileURLWithPath: arguments.first ?? "").lastPathComponent
         if invokedAs == "shark" { return true }
         guard let first = arguments.dropFirst().first else { return false }
-        return commands.contains(first) || first == "--help" || first == "--version"
+        return commands.contains(first) || ["--help", "--version", "--list-sources"].contains(first)
     }
 
     static func run(_ arguments: [String]) async -> Int32 {
@@ -27,6 +27,7 @@ enum SharkCLI {
         case "convert":  return await convert(rest)
         case "download": return await download(rest)
         case "formats":  return formats(rest)
+        case "sources", "--list-sources": return await sources(rest)
         case "info":     return await info(rest)
         case "version", "--version": out("Shark 1.0"); return 0
         case "help", "--help", "-h": out(usage); return 0
@@ -232,6 +233,30 @@ enum SharkCLI {
         return 0
     }
 
+    // MARK: - sources
+
+    /// Список площадок берём у самого yt-dlp: держать свою копию значило бы
+    /// расходиться с реальностью после каждого его обновления.
+    private static func sources(_ arguments: [String]) async -> Int32 {
+        guard let ytdlp = Tools.url(for: .ytdlp) else {
+            err(ToolsError.missing(.ytdlp).localizedDescription)
+            return 3
+        }
+        guard let result = try? await ProcessRunner.capture(ytdlp, ["--list-extractors"]),
+              result.ok else {
+            err("Не удалось получить список источников.")
+            return 1
+        }
+
+        var lines = result.stdout.split(separator: "\n").map(String.init)
+        if let filter = arguments.first?.lowercased() {
+            lines = lines.filter { $0.lowercased().contains(filter) }
+        }
+        lines.forEach { out($0) }
+        err("Всего: \(lines.count)")
+        return 0
+    }
+
     // MARK: - info
 
     private static func info(_ arguments: [String]) async -> Int32 {
@@ -352,6 +377,7 @@ enum SharkCLI {
       shark convert <файлы…> --to <формат> [параметры]
       shark download <ссылки…> [параметры]
       shark formats [категория]
+      shark sources [фильтр]
       shark info <файл>
 
     КОНВЕРТАЦИЯ
