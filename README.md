@@ -157,15 +157,34 @@ sudo ln -sf /Applications/Shark.app/Contents/Helpers/shark /usr/local/bin/shark
 ```
 
 ```bash
-shark convert clip.mov --to mp4 --quality high
-shark convert *.heic --to jpg --image-quality 90 --out ~/Pictures
-shark convert doc.docx --to pdf --name report
+shark c clip.mov --to mp4 --quality high
+shark c *.heic --to jpg --image-quality 90 --out ~/Pictures
+shark c doc.docx --to pdf --name report
 shark download <url> --quality 1080
 shark download <url> --audio mp3 --cookies firefox
 shark formats
 shark sources youtube
 shark info clip.mov
-shark help
+shark man
+```
+
+`c` is a short alias for `convert` — the command you type most often should be
+one character, not seven. Everything else about it is identical.
+
+### Manual
+
+```bash
+shark man
+```
+
+works straight away: the page ships inside the bundle and is opened from there,
+so no installation and no `sudo` is needed just to read it.
+
+To get the usual `man shark` as well, link the page into the system manual path:
+
+```bash
+sudo ln -sf /Applications/Shark.app/Contents/Resources/man/man1/shark.1 \
+            /usr/local/share/man/man1/shark.1
 ```
 
 Result paths go to stdout, progress goes to stderr, so `shark convert *.wav --to mp3 > done.txt` yields a clean list of paths ready for further processing. The progress bar is drawn only when stderr is a terminal.

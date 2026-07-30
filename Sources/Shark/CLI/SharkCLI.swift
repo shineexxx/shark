@@ -8,7 +8,8 @@ import AppKit
 @MainActor
 enum SharkCLI {
 
-    static let commands = ["convert", "download", "formats", "sources", "info", "help", "version"]
+    static let commands = ["convert", "c", "download", "formats", "sources", "info",
+                           "man", "help", "version"]
 
     /// Запускать ли терминальный режим: по имени вызова или по первому аргументу.
     static func shouldRun(_ arguments: [String]) -> Bool {
@@ -24,11 +25,13 @@ enum SharkCLI {
         if !rest.isEmpty { rest.removeFirst() }
 
         switch command {
-        case "convert":  return await convert(rest)
+        // `c` — короткая форма самой частой команды.
+        case "convert", "c": return await convert(rest)
         case "download": return await download(rest)
         case "formats":  return formats(rest)
         case "sources", "--list-sources": return await sources(rest)
         case "info":     return await info(rest)
+        case "man":      return await manual()
         case "version", "--version": out("Shark 1.0"); return 0
         case "help", "--help", "-h": out(usage); return 0
         default:
@@ -233,6 +236,38 @@ enum SharkCLI {
         return 0
     }
 
+    // MARK: - man
+
+    /// Показывает страницу руководства прямо из бандла: чтобы `shark man`
+    /// работал сразу, не требуя установки в системный путь через sudo.
+    private static func manual() async -> Int32 {
+        let candidates = [
+            Bundle.main.resourceURL?.appendingPathComponent("man/man1/shark.1"),
+            Bundle.main.executableURL?.deletingLastPathComponent()
+                .deletingLastPathComponent()
+                .appendingPathComponent("Resources/man/man1/shark.1")
+        ].compactMap { $0 }
+
+        guard let page = candidates.first(where: { FileManager.default.fileExists(atPath: $0.path) })
+        else {
+            err("Страница руководства не найдена в приложении.")
+            return 1
+        }
+
+        let man = URL(fileURLWithPath: "/usr/bin/man")
+        let process = Process()
+        process.executableURL = man
+        process.arguments = [page.path]
+        do {
+            try process.run()
+            process.waitUntilExit()
+            return process.terminationStatus
+        } catch {
+            err(error.localizedDescription)
+            return 1
+        }
+    }
+
     // MARK: - sources
 
     /// Список площадок берём у самого yt-dlp: держать свою копию значило бы
@@ -375,10 +410,12 @@ enum SharkCLI {
 
     ИСПОЛЬЗОВАНИЕ
       shark convert <файлы…> --to <формат> [параметры]
+      shark c       <файлы…> --to <формат>   — то же самое, короче
       shark download <ссылки…> [параметры]
       shark formats [категория]
       shark sources [фильтр]
       shark info <файл>
+      shark man                              — полное руководство
 
     КОНВЕРТАЦИЯ
       -t, --to <формат>        во что превращать (обязательно)
@@ -402,7 +439,7 @@ enum SharkCLI {
           --no-thumbnail       без обложки
 
     ПРИМЕРЫ
-      shark convert clip.mov --to mp4 --quality high
+      shark c clip.mov --to mp4 --quality high
       shark convert *.heic --to jpg --image-quality 90 --out ~/Pictures
       shark convert doc.docx --to pdf
       shark download https://example.com/watch?v=… --quality 1080

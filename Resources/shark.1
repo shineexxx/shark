@@ -1,0 +1,241 @@
+.TH SHARK 1 "2026-07-30" "Shark 1.0" "User Commands"
+.SH NAME
+shark \- convert almost any file and download video from the command line
+.SH SYNOPSIS
+.B shark convert
+.I file ...
+.B \-\-to
+.I format
+.RI [ options ]
+.br
+.B shark c
+.I file ...
+.B \-\-to
+.I format
+.RI [ options ]
+.br
+.B shark download
+.I url ...
+.RI [ options ]
+.br
+.B shark formats
+.RI [ category ]
+.br
+.B shark sources
+.RI [ filter ]
+.br
+.B shark info
+.I file
+.br
+.B shark man
+.SH DESCRIPTION
+.B shark
+is the terminal face of the Shark macOS app. It is not a separate build: the
+binary inspects its own invocation name and the first argument, then either
+opens the window or stays in the terminal. Conversions performed here and in
+the window therefore cannot drift apart \(em the code is the same.
+.PP
+Four engines sit behind one queue and the right one is chosen automatically
+from the pair of input and output formats. Media goes through
+.BR ffmpeg ,
+images through ImageIO, documents through PDFKit and CoreText, and downloads
+through
+.BR yt\-dlp .
+All of them are bundled inside the application, so nothing has to be installed
+separately.
+.SH COMMANDS
+.TP
+.B convert\fR, \fBc
+Convert one or more files. Requires
+.BR \-\-to .
+.B c
+is an alias, identical in every respect.
+.TP
+.B download
+Download video or audio from a URL.
+.TP
+.B formats \fR[\fIcategory\fR]
+List the output formats. The optional argument narrows the list to one
+category.
+.TP
+.B sources \fR[\fIfilter\fR]
+List the download sources known to the bundled yt\-dlp \(em 1752 extractors at
+the time of writing. The count is printed to standard error so that standard
+output stays a clean list.
+.TP
+.B info \fIfile\fR
+Print type, size and, for media, duration, resolution and codecs.
+.TP
+.B man
+Open this manual page from inside the application bundle, without installing
+it into the system manual path.
+.TP
+.B help\fR, \fBversion
+Print usage or the version.
+.SH CONVERT OPTIONS
+.TP
+.BI \-t ", " \-\-to " format"
+Target format. Required. See
+.B shark formats
+for the list.
+.TP
+.BI \-o ", " \-\-out " directory"
+Where results go. Defaults to the directory of each source file.
+.TP
+.BI \-\-name " name"
+Name of the result without extension. Only valid with a single input file.
+.TP
+.BI \-\-quality " preset"
+.BR high ", " balanced " or " compact .
+Maps to a CRF preset; affects size far more than it affects perceived quality.
+.TP
+.BI \-\-resolution " height"
+.BR original ", " 2160 ", " 1440 ", " 1080 ", " 720 ", " 480 " or " 360 .
+Only ever scales down; a smaller source is left alone.
+.TP
+.BI \-\-bitrate " kbps"
+Audio bitrate:
+.BR 96 ", " 128 ", " 192 ", " 256 " or " 320 .
+Ignored for lossless targets.
+.TP
+.BI \-\-image\-quality " 0-100"
+Quality for lossy image formats such as jpg, heic and webp.
+.TP
+.B \-\-strip\-metadata
+Drop metadata from the result.
+.TP
+.B \-\-overwrite
+Replace an existing file instead of creating a numbered copy.
+.SH DOWNLOAD OPTIONS
+.TP
+.BI \-o ", " \-\-out " directory"
+Where downloads go. Defaults to ~/Downloads.
+.TP
+.BI \-\-audio " format"
+Audio only:
+.BR mp3 ", " m4a ", " opus ", " flac " or " wav .
+.TP
+.BI \-\-quality " height"
+.BR best ", " 2160 ", " 1440 ", " 1080 ", " 720 " or " 480 .
+.TP
+.BI \-\-container " type"
+.BR mp4 ", " mkv " or " webm .
+.TP
+.BI \-\-cookies " source"
+.BR safari ", " chrome ", " firefox ", " edge ,
+or a path to a cookies.txt file. Needed for private, age\-restricted and
+account\-only videos.
+.IP
+Safari cookies live in a protected container and require Full Disk Access.
+Firefox needs no permission at all, and a cookies.txt file avoids the question
+entirely.
+.TP
+.B \-\-subs
+Write and embed ru/en subtitles.
+.TP
+.B \-\-playlist
+Download the whole playlist instead of a single item.
+.TP
+.B \-\-no\-thumbnail
+Do not embed cover art.
+.SH OUTPUT
+Result paths are written to standard output, one per line. Progress is written
+to standard error, and the progress bar is drawn only when standard error is a
+terminal. Redirecting standard output therefore yields a clean list of paths
+suitable for further processing.
+.SH EXIT STATUS
+.TP
+.B 0
+Everything succeeded.
+.TP
+.B 1
+At least one file or download failed.
+.TP
+.B 2
+Bad arguments. Unknown options are rejected rather than silently ignored, so a
+typo in a flag is an error rather than a quiet change in behaviour.
+.TP
+.B 3
+A required engine is missing from the bundle.
+.SH EXAMPLES
+Convert a video, leaving the result next to the original:
+.PP
+.RS 4
+.EX
+shark c clip.mov \-\-to mp4
+.EE
+.RE
+.PP
+Convert a folder of camera photographs, writing elsewhere:
+.PP
+.RS 4
+.EX
+shark c ~/Photos/*.heic \-\-to jpg \-\-image\-quality 90 \-\-out ~/Desktop
+.EE
+.RE
+.PP
+Extract audio from a lecture recording:
+.PP
+.RS 4
+.EX
+shark c lecture.mp4 \-\-to mp3 \-\-bitrate 320
+.EE
+.RE
+.PP
+Shrink a large video for sharing:
+.PP
+.RS 4
+.EX
+shark c big.mov \-\-to mp4 \-\-quality compact \-\-resolution 1080
+.EE
+.RE
+.PP
+Turn a document into a PDF under a different name:
+.PP
+.RS 4
+.EX
+shark c report.docx \-\-to pdf \-\-name "July report"
+.EE
+.RE
+.PP
+Collect the resulting paths for a later step:
+.PP
+.RS 4
+.EX
+shark c *.wav \-\-to mp3 > converted.txt
+.EE
+.RE
+.PP
+Walk a tree, which the window cannot do:
+.PP
+.RS 4
+.EX
+find ~/Video \-name "*.avi" \-exec shark c {} \-\-to mp4 \\;
+.EE
+.RE
+.PP
+Download a video, then the same video as audio:
+.PP
+.RS 4
+.EX
+shark download <url> \-\-quality 1080
+shark download <url> \-\-audio mp3 \-\-cookies firefox
+.EE
+.RE
+.SH FILES
+.TP
+.I /Applications/Shark.app/Contents/Helpers/shark
+The executable, a link to the application binary.
+.TP
+.I ~/Library/Application Support/Shark/Tools/
+Updated engines. Looked up before the bundled ones, so an update overrides the
+baseline shipped inside the application.
+.SH NOTES
+Download only what you have the right to: your own uploads, freely licensed
+material, or content the rights holder permits you to download. The terms of
+each platform are your responsibility.
+.SH SEE ALSO
+.BR ffmpeg (1),
+.BR yt\-dlp (1)
+.PP
+Project page: https://github.com/shineexxx/shark
