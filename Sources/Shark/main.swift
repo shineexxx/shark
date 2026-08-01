@@ -3,6 +3,20 @@ import Foundation
 // Обычный запуск открывает окно; `--selftest` прогоняет движки без интерфейса.
 // Проверка идёт на главном потоке — импорт документов в AppKit другого не допускает,
 // поэтому здесь крутится обычный RunLoop, а не блокирующий семафор.
+if let index = CommandLine.arguments.firstIndex(of: "--make-dmg-background") {
+    let directory = CommandLine.arguments.count > index + 1
+        ? URL(fileURLWithPath: CommandLine.arguments[index + 1])
+        : URL(fileURLWithPath: ".")
+    do {
+        try DMGBackground.write(to: directory)
+        print("Фон образа собран: \(directory.path)")
+        exit(0)
+    } catch {
+        print("Ошибка: \(error.localizedDescription)")
+        exit(1)
+    }
+}
+
 if let index = CommandLine.arguments.firstIndex(of: "--make-icon") {
     let output = CommandLine.arguments.count > index + 1
         ? URL(fileURLWithPath: CommandLine.arguments[index + 1])
