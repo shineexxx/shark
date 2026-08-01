@@ -243,8 +243,13 @@ enum Localization {
         "Actions": "Действия",
 
         // MARK: Контекстное меню Finder
-        "Convert with Shark": "Конвертировать через Shark",
+        // Сами заголовки пунктов сюда не попадают: их рисует Finder по
+        // ServicesMenu.strings. Здесь только то, что показывает приложение.
         "No files were passed": "Файлы не переданы",
+        "No output format was given": "Не указан формат",
+        "Conversion failed": "Конвертация не удалась",
+        "Converted to %@": "Готово: %@",
+        "Converted %@ files to %@": "Готово: %@ файлов в %@",
 
         // MARK: Обновление приложения
         "Check for updates on launch": "Проверять обновления при запуске",

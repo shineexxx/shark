@@ -48,20 +48,141 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>Локальный инструмент. Все преобразования выполняются на этом компьютере.</string>
+	<!-- Пункты контекстного меню Finder. Быстрые форматы конвертируют молча,
+	     не открывая окно; последний пункт открывает очередь для всего
+	     остального. Отбор по NSSendFileTypes делает система, поэтому «в MP3»
+	     не появится на картинке, хотя список пунктов статичный.
+	     Заголовки переводятся через Resources/<lang>.lproj/ServicesMenu.strings. -->
 	<key>NSServices</key>
 	<array>
 		<dict>
 			<key>NSMenuItem</key>
 			<dict>
 				<key>default</key>
-				<string>Convert with Shark</string>
+				<string>Convert to MP4</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>convertTo</string>
+			<key>NSPortName</key>
+			<string>Shark</string>
+			<key>NSUserData</key>
+			<string>mp4</string>
+			<key>NSSendFileTypes</key>
+			<array>
+				<string>public.movie</string>
+			</array>
+			<key>NSSendTypes</key>
+			<array>
+				<string>NSFilenamesPboardType</string>
+				<string>public.file-url</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Convert to MP3</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>convertTo</string>
+			<key>NSPortName</key>
+			<string>Shark</string>
+			<key>NSUserData</key>
+			<string>mp3</string>
+			<key>NSSendFileTypes</key>
+			<array>
+				<string>public.movie</string>
+				<string>public.audio</string>
+			</array>
+			<key>NSSendTypes</key>
+			<array>
+				<string>NSFilenamesPboardType</string>
+				<string>public.file-url</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Convert to JPG</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>convertTo</string>
+			<key>NSPortName</key>
+			<string>Shark</string>
+			<key>NSUserData</key>
+			<string>jpg</string>
+			<key>NSSendFileTypes</key>
+			<array>
+				<string>public.image</string>
+			</array>
+			<key>NSSendTypes</key>
+			<array>
+				<string>NSFilenamesPboardType</string>
+				<string>public.file-url</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Convert to PNG</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>convertTo</string>
+			<key>NSPortName</key>
+			<string>Shark</string>
+			<key>NSUserData</key>
+			<string>png</string>
+			<key>NSSendFileTypes</key>
+			<array>
+				<string>public.image</string>
+			</array>
+			<key>NSSendTypes</key>
+			<array>
+				<string>NSFilenamesPboardType</string>
+				<string>public.file-url</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Convert to PDF</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>convertTo</string>
+			<key>NSPortName</key>
+			<string>Shark</string>
+			<key>NSUserData</key>
+			<string>pdf</string>
+			<!-- PDF из PDF смысла не имеет, поэтому com.adobe.pdf здесь нет. -->
+			<key>NSSendFileTypes</key>
+			<array>
+				<string>public.image</string>
+				<string>public.plain-text</string>
+				<string>public.rtf</string>
+				<string>public.html</string>
+				<string>net.daringfireball.markdown</string>
+				<string>com.microsoft.word.doc</string>
+				<string>org.openxmlformats.wordprocessingml.document</string>
+			</array>
+			<key>NSSendTypes</key>
+			<array>
+				<string>NSFilenamesPboardType</string>
+				<string>public.file-url</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Convert with Shark…</string>
 			</dict>
 			<key>NSMessage</key>
 			<string>convertWithShark</string>
 			<key>NSPortName</key>
 			<string>Shark</string>
-			<key>NSRequiredContext</key>
-			<dict/>
 			<!-- Оба типа сразу: старый список путей и современный file-URL.
 			     Какой из них положит Finder, зависит от версии системы. -->
 			<key>NSSendFileTypes</key>

@@ -54,11 +54,19 @@ for lang in en ru; do
   : > "$CONTENTS/Resources/$lang.lproj/Localizable.strings"
 done
 
-# Заголовок пункта в контекстном меню Finder система берёт отсюда, а не из
-# нашей таблицы переводов: службу рисует Finder, и до нашего кода дело ещё
-# не дошло. Язык здесь — системный, настройку языка в приложении он не видит.
-printf '"Convert with Shark" = "Конвертировать через Shark";\n' \
-  > "$CONTENTS/Resources/ru.lproj/Localizable.strings"
+# Заголовки пунктов в контекстном меню Finder система берёт из отдельного
+# ServicesMenu.strings, а не из нашей таблицы переводов и не из Localizable:
+# меню рисует Finder, и до нашего кода дело ещё не дошло. Так же это сделано
+# у Safari. Язык здесь системный — настройку языка внутри приложения Finder
+# не видит и видеть не может.
+cat > "$CONTENTS/Resources/ru.lproj/ServicesMenu.strings" <<'STRINGS'
+"Convert with Shark…" = "Конвертировать через Shark…";
+"Convert to MP4" = "Конвертировать в MP4";
+"Convert to MP3" = "Конвертировать в MP3";
+"Convert to JPG" = "Конвертировать в JPG";
+"Convert to PNG" = "Конвертировать в PNG";
+"Convert to PDF" = "Конвертировать в PDF";
+STRINGS
 printf 'APPL????' > "$CONTENTS/PkgInfo"
 
 for tool in ffmpeg ffprobe yt-dlp deno; do

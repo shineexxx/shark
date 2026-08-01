@@ -146,7 +146,15 @@ Options: video quality (CRF preset), resolution cap, audio bitrate, JPEG/HEIC qu
 - **Into the window** — the left panel of the converter.
 - **Onto the Dock icon** — files join the queue of the window that is already open. The scene is declared as `Window`, not `WindowGroup`: a group spawned a new window for every file opened, so dropping onto the Dock kept multiplying windows.
 - **Onto the menu bar icon** — the fin next to the clock. Click opens the window, Control-click opens a menu.
-- **From the Finder context menu** — right-click any file and pick **Convert with Shark**, near the bottom of the menu. Nothing to enable and nothing to run: the item is a macOS service declared in `Info.plist`, so it appears once the app has been moved to `/Applications` and opened once. The top part of the context menu (Open, Rename) is reserved by the system for Finder itself; services land in the lower group, alongside items from other apps.
+- **From the Finder context menu** — right-click any file and the lower part of the menu offers **Convert to MP4**, **Convert to MP3**, **Convert to JPG**, **Convert to PNG**, **Convert to PDF** and **Convert with Shark…**. Nothing to enable and nothing to run: these are macOS services declared in `Info.plist`, so they appear once the app has been moved to `/Applications` and opened once. The top part of the context menu (Open, Rename) is reserved by the system for Finder itself.
+
+### Converting without opening the app
+
+The format items convert on the spot. The result is written next to the original, or into the default folder from Settings, and a notification says when it is done. No window opens; if Shark was not running, it starts, converts and quits again, behaving like a command line tool with a menu instead of a prompt. **Convert with Shark…** is the way in for everything else: it drops the selection into the queue and opens the window, where any of the ~120 targets is available.
+
+Which items appear is decided by the system, not by us: every entry declares the types it accepts, so **Convert to MP3** shows up on video and audio but never on a photo, and **Convert to PDF** shows up on images, text, Markdown and Word files but not on a PDF. The list is static; the filtering makes it behave as if it were not.
+
+The titles are translated in `Resources/<lang>.lproj/ServicesMenu.strings` — not through the app's own translation table, and not through `Localizable.strings`. The menu is drawn by Finder before any of our code runs, which is also why these titles follow the **system** language and cannot follow the language chosen inside Shark.
 
 `Info.plist` declares the document type as `public.item`, the root of the type hierarchy, so any file or folder is accepted. The handler rank is `Alternate` so Shark never steals files from the apps that normally own them.
 
