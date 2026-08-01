@@ -207,6 +207,8 @@ final class AppUpdater: ObservableObject {
             .appendingPathComponent("Shark-\(release.version).zip")
         try? fileManager.removeItem(at: archive)
         try fileManager.moveItem(at: temporary, to: archive)
+        // Страховка на случай ошибки: на успешном пути уборка идёт ниже,
+        // до перезапуска.
         defer { try? fileManager.removeItem(at: archive) }
 
         status = L("Installing…")
@@ -243,6 +245,12 @@ final class AppUpdater: ObservableObject {
 
         _ = try fileManager.replaceItemAt(current, withItemAt: fresh)
 
+        // Убираем за собой здесь, а не в defer: relaunch завершает процесс,
+        // и отложенная уборка просто не успевает выполниться — каталог
+        // .shark-update-… и скачанный архив оставались после каждой установки.
+        try? fileManager.removeItem(at: staging)
+        try? fileManager.removeItem(at: archive)
+
         relaunch(at: current)
     }
 
@@ -257,8 +265,13 @@ final class AppUpdater: ObservableObject {
         NSApp.terminate(nil)
     }
 
-    /// Каталог Homebrew с установленным каском, если приложение пришло оттуда.
+    /// Каталог Homebrew с установленным каском — но только если оттуда пришла
+    /// именно запущенная копия. Каск ставит приложение в /Applications, поэтому
+    /// копия, запущенная откуда-то ещё, к Homebrew отношения не имеет, и
+    /// отправлять её владельца к `brew upgrade` было бы неверным советом.
     private static var homebrewCask: URL? {
+        let bundle = Bundle.main.bundleURL.resolvingSymlinksInPath()
+        guard bundle.deletingLastPathComponent().path == "/Applications" else { return nil }
         let candidates = ["/opt/homebrew/Caskroom/shark", "/usr/local/Caskroom/shark"]
         return candidates.map(URL.init(fileURLWithPath:))
             .first { FileManager.default.fileExists(atPath: $0.path) }
