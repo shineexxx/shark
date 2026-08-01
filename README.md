@@ -18,7 +18,7 @@ Paste a link and the source is checked before you commit to it: platform, title 
 
 ## Install
 
-**[⬇ Download Shark 1.0 (.dmg, 109 MB)](https://github.com/shineexxx/shark/releases/latest/download/Shark-1.0.dmg)**
+**[⬇ Download Shark 1.1 (.dmg, 112 MB)](https://github.com/shineexxx/shark/releases/latest/download/Shark-1.1.dmg)**
 
 Open the image and drag `Shark.app` onto the Applications shortcut inside. Then
 read [First launch](#first-launch) below — macOS blocks the app once, and that

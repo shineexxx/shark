@@ -18,8 +18,20 @@ TAG="v$VERSION"
 say() { printf "\033[1;36m==>\033[0m %s\n" "$1"; }
 
 # 1. Версия в бандле должна совпадать с тегом, иначе каск и приложение разойдутся.
+#    Правим одну строку, а не через PlistBuddy: тот переписывает файл целиком,
+#    выбрасывая XML-комментарии и переставляя ключи, — так уже был потерян
+#    комментарий, объясняющий устройство служб.
 say "Проставляю версию $VERSION"
-/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$ROOT/Resources/Info.plist"
+python3 - "$ROOT/Resources/Info.plist" "$VERSION" <<'PY'
+import re, sys
+path, version = sys.argv[1], sys.argv[2]
+text = open(path).read()
+new, count = re.subn(r"(<key>CFBundleShortVersionString</key>\s*\n\s*<string>)[^<]*(</string>)",
+                     lambda m: m.group(1) + version + m.group(2), text)
+if count != 1:
+    sys.exit(f"CFBundleShortVersionString: ожидал одно вхождение, нашёл {count}")
+open(path, "w").write(new)
+PY
 
 # 2. Чистая сборка
 say "Собираю"

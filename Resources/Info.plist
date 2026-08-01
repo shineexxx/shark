@@ -37,7 +37,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.1</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSApplicationCategoryType</key>
@@ -64,10 +64,10 @@
 			</dict>
 			<key>NSMessage</key>
 			<string>convertWithShark</string>
-			<key>NSRequiredContext</key>
-			<dict/>
 			<key>NSPortName</key>
 			<string>Shark</string>
+			<key>NSRequiredContext</key>
+			<dict/>
 			<key>NSSendFileTypes</key>
 			<array>
 				<string>public.item</string>
