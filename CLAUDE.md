@@ -5,8 +5,14 @@
 All commits are authored by the repository owner:
 
 ```
-Arseny <abs0ss1007@gmail.com>
+Arseny <141059116+shineexxx@users.noreply.github.com>
 ```
+
+The address is GitHub's noreply form on purpose. GitHub links a commit to a
+profile by matching the author email, and a personal address that is not
+registered on the account leaves commits showing a bare name with no link to
+anyone. The noreply address always matches, and it keeps a private address out
+of a public repository.
 
 Do **not** add `Co-Authored-By` trailers of any kind, and do not mention the
 tooling used to write the code in commit messages. The identity is also set in

@@ -33,14 +33,29 @@ ARCHIVE="$ROOT/build/Shark-$VERSION.zip"
 rm -f "$ARCHIVE"
 ditto -c -k --sequesterRsrc --keepParent "$ROOT/build/Shark.app" "$ARCHIVE"
 
+# 3b. DMG — привычный способ поставить приложение вручную: открыл образ,
+#     перетащил в Applications. Ссылка на /Applications делает это очевидным.
+say "Собираю образ"
+DMG="$ROOT/build/Shark-$VERSION.dmg"
+STAGE="$(mktemp -d)/Shark"
+mkdir -p "$STAGE"
+# ditto, а не cp: внутри бандла есть символические ссылки.
+ditto "$ROOT/build/Shark.app" "$STAGE/Shark.app"
+ln -s /Applications "$STAGE/Applications"
+rm -f "$DMG"
+hdiutil create -volname "Shark" -srcfolder "$STAGE" -ov -format UDZO "$DMG" >/dev/null
+rm -rf "$(dirname "$STAGE")"
+
 SHA="$(shasum -a 256 "$ARCHIVE" | cut -d' ' -f1)"
+DMG_SHA="$(shasum -a 256 "$DMG" | cut -d' ' -f1)"
 SIZE="$(du -h "$ARCHIVE" | cut -f1)"
 say "Готово: $(basename "$ARCHIVE"), $SIZE"
-say "sha256: $SHA"
+say "zip  sha256: $SHA"
+say "dmg  sha256: $DMG_SHA  ($(du -h "$DMG" | cut -f1))"
 
 # 4. Релиз
 say "Публикую релиз $TAG"
-gh release create "$TAG" "$ARCHIVE" \
+gh release create "$TAG" "$ARCHIVE" "$DMG" \
   --title "Shark $VERSION" \
   --notes "Native macOS file converter and video downloader.
 
@@ -54,4 +69,4 @@ has to be installed. The \`shark\` command and its manual page are linked
 automatically." \
   2>&1 | tail -2
 
-say "Обновите каск: sha256 $SHA"
+say "Обновите каск: sha256 $DMG_SHA"

@@ -50,8 +50,8 @@ Settings clears the mark, which is exactly what that button is for.
 
 ### Without Homebrew
 
-Download the `.zip` from [Releases](https://github.com/shineexxx/shark/releases),
-unpack it, and drag `Shark.app` into Applications. The first-launch steps above
+Download the `.dmg` from [Releases](https://github.com/shineexxx/shark/releases),
+open it and drag `Shark.app` onto the Applications shortcut inside. The first-launch steps above
 still apply. To get the command line tool as well:
 
 ```bash
