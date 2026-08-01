@@ -16,6 +16,14 @@ Paste a link and the source is checked before you commit to it: platform, title 
 
 ## Install
 
+**[⬇ Download Shark 1.0 (.dmg, 115 MB)](https://github.com/shineexxx/shark/releases/latest/download/Shark-1.0.dmg)**
+
+Open the image and drag `Shark.app` onto the Applications shortcut inside. Then
+read [First launch](#first-launch) below — macOS blocks the app once, and that
+is expected.
+
+Or install everything, including the command line tool, in one step:
+
 ```bash
 brew tap shineexxx/tap
 brew install --cask shark
@@ -48,15 +56,17 @@ the internet, and only lets marked software through if it has been notarised by
 Apple. Notarisation requires a paid developer account. Your one confirmation in
 Settings clears the mark, which is exactly what that button is for.
 
-### Without Homebrew
+### Adding the command line tool to a manual install
 
-Download the `.dmg` from [Releases](https://github.com/shineexxx/shark/releases),
-open it and drag `Shark.app` onto the Applications shortcut inside. The first-launch steps above
-still apply. To get the command line tool as well:
+The Homebrew cask links `shark` and its manual page for you. After installing
+from the disk image, link them by hand:
 
 ```bash
 sudo ln -sf /Applications/Shark.app/Contents/Helpers/shark /usr/local/bin/shark
 ```
+
+All releases and their checksums are on the
+[Releases page](https://github.com/shineexxx/shark/releases).
 
 ## Build from source
 
