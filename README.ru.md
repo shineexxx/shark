@@ -18,7 +18,7 @@
 
 ## Установка
 
-**[⬇ Скачать Shark 1.1 (.dmg, 112 МБ)](https://github.com/shineexxx/shark/releases/latest/download/Shark-1.1.dmg)**
+**[⬇ Скачать Shark 1.1.1 (.dmg, 112 МБ)](https://github.com/shineexxx/shark/releases/latest/download/Shark-1.1.1.dmg)**
 
 Откройте образ и перетащите `Shark.app` на ярлык Applications внутри. Затем прочитайте [Первый запуск](#первый-запуск) ниже — macOS один раз заблокирует приложение, и это ожидаемо.
 
