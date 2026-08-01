@@ -19,12 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-Shark bundles third-party binaries that are fetched at build time and are not
-part of this repository. They keep their own licences:
-
-  ffmpeg / ffprobe — https://ffmpeg.org        (LGPL/GPL depending on build)
-  yt-dlp           — https://github.com/yt-dlp/yt-dlp  (Unlicense)
-  deno             — https://deno.com          (MIT)

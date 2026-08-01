@@ -68,6 +68,11 @@ sudo ln -sf /Applications/Shark.app/Contents/Helpers/shark /usr/local/bin/shark
 All releases and their checksums are on the
 [Releases page](https://github.com/shineexxx/shark/releases).
 
+## Licence
+
+MIT — see [LICENSE](LICENSE). The bundled engines keep their own licences, listed
+in [THIRD-PARTY.md](THIRD-PARTY.md).
+
 ## Build from source
 
 ```bash
