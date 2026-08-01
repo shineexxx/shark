@@ -14,7 +14,51 @@ A mixed queue converts in one pass: video and audio to MP4, a Markdown report to
 
 Paste a link and the source is checked before you commit to it: platform, title and duration, or the reason it will not work.
 
-## Build
+## Install
+
+```bash
+brew tap shineexxx/tap
+brew install --cask shark
+```
+
+That is the whole installation. It puts **Shark.app** into `/Applications`, links
+the **`shark`** command so it works from any terminal, and registers the manual
+page so `man shark` works too. The engines — ffmpeg, ffprobe, yt-dlp, deno — are
+already inside the app; nothing else is downloaded or installed.
+
+Updating later is `brew upgrade --cask shark`, and removing everything is
+`brew uninstall --zap --cask shark`.
+
+### First launch
+
+Shark is signed ad-hoc rather than with a paid Apple Developer ID, so macOS
+blocks the first launch. This is expected, it happens once, and it is not a sign
+that anything is wrong:
+
+1. Open Shark from Launchpad. macOS refuses and offers no way forward — that is
+   normal.
+2. Open **System Settings → Privacy & Security**, scroll to the bottom, and
+   click **Open Anyway** next to Shark.
+3. Open Shark again and confirm.
+
+From then on it launches like any other app, and the `shark` command works too.
+
+The honest version of what is happening: macOS marks anything downloaded from
+the internet, and only lets marked software through if it has been notarised by
+Apple. Notarisation requires a paid developer account. Your one confirmation in
+Settings clears the mark, which is exactly what that button is for.
+
+### Without Homebrew
+
+Download the `.zip` from [Releases](https://github.com/shineexxx/shark/releases),
+unpack it, and drag `Shark.app` into Applications. The first-launch steps above
+still apply. To get the command line tool as well:
+
+```bash
+sudo ln -sf /Applications/Shark.app/Contents/Helpers/shark /usr/local/bin/shark
+```
+
+## Build from source
 
 ```bash
 bash Scripts/build.sh
@@ -150,11 +194,8 @@ Only download what you have the right to: your own uploads, freely licensed mate
 
 ## Command line
 
-`shark` ships inside the app — the same engines, from a terminal.
-
-```bash
-sudo ln -sf /Applications/Shark.app/Contents/Helpers/shark /usr/local/bin/shark
-```
+`shark` ships inside the app and is linked automatically by the Homebrew cask —
+the same engines, from a terminal.
 
 ```bash
 shark c clip.mov --to mp4 --quality high
@@ -177,14 +218,14 @@ one character, not seven. Everything else about it is identical.
 shark man
 ```
 
-works straight away: the page ships inside the bundle and is opened from there,
-so no installation and no `sudo` is needed just to read it.
+opens the page from inside the bundle, so it works even before anything is
+linked. `man shark` works too — the Homebrew cask registers the page for you.
 
-To get the usual `man shark` as well, link the page into the system manual path:
+If you installed by hand rather than through Homebrew, point `man` at the
+bundled page by adding one line to `~/.zshrc`:
 
 ```bash
-sudo ln -sf /Applications/Shark.app/Contents/Resources/man/man1/shark.1 \
-            /usr/local/share/man/man1/shark.1
+export MANPATH="$MANPATH:/Applications/Shark.app/Contents/Resources/man"
 ```
 
 Result paths go to stdout, progress goes to stderr, so `shark convert *.wav --to mp3 > done.txt` yields a clean list of paths ready for further processing. The progress bar is drawn only when stderr is a terminal.
