@@ -15,7 +15,7 @@ struct SettingsView: View {
             EngineSettings()
                 .tabItem { Label(L("Engines"), systemImage: "shippingbox") }
         }
-        .frame(width: 480, height: 372)
+        .frame(width: 480, height: 440)
         // Смена языка перестраивает поддерево целиком: иначе половина
         // подписей осталась бы на прежнем языке до перезапуска.
         .id(settings.language)
@@ -54,8 +54,44 @@ private struct GeneralSettings: View {
 
             Toggle(L("Show icon in the menu bar"), isOn: $settings.showMenuBarItem)
                 .disabled(settings.keepRunningInBackground)
+
+            Divider().padding(.vertical, 4)
+
+            UpdateSettings(settings: settings)
         }
         .formStyle(.grouped)
+    }
+}
+
+// MARK: - Обновления
+
+private struct UpdateSettings: View {
+    @ObservedObject var settings: AppSettings
+    @ObservedObject private var updater = AppUpdater.shared
+
+    var body: some View {
+        Toggle(L("Check for updates on launch"), isOn: $settings.checkForUpdates)
+
+        HStack {
+            Text(String(format: L("Version %@"), AppUpdater.currentVersion))
+                .foregroundStyle(.secondary)
+            Spacer()
+            if updater.isBusy { ProgressView().controlSize(.small) }
+            if let release = updater.available, !updater.isBusy {
+                Button(L("Update and Restart")) { updater.install(release) }
+                    .buttonStyle(.borderedProminent)
+            } else {
+                Button(L("Check Now")) { updater.checkNow() }
+                    .disabled(updater.isBusy)
+            }
+        }
+
+        if let status = updater.status {
+            Text(status)
+                .font(.system(size: 10.5))
+                .foregroundStyle(updater.failed ? .orange : .secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 }
 

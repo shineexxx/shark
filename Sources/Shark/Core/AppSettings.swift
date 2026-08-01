@@ -20,6 +20,7 @@ final class AppSettings: ObservableObject {
         soundWhenDone = defaults.object(forKey: Keys.sound) as? Bool ?? true
         notifyWhenDone = defaults.object(forKey: Keys.notify) as? Bool ?? false
         overwriteExisting = defaults.object(forKey: Keys.overwrite) as? Bool ?? false
+        checkForUpdates = defaults.object(forKey: Keys.checkUpdates) as? Bool ?? true
         launchAtLogin = SMAppService.mainApp.status == .enabled
     }
 
@@ -30,6 +31,13 @@ final class AppSettings: ObservableObject {
         static let sound = "soundWhenDone"
         static let notify = "notifyWhenDone"
         static let overwrite = "overwriteExisting"
+        static let checkUpdates = "checkForUpdates"
+    }
+
+    /// Проверять ли обновления при запуске. По умолчанию да: приложение
+    /// подписано ad-hoc, и устаревшая копия чинится только заменой.
+    @Published var checkForUpdates = true {
+        didSet { defaults.set(checkForUpdates, forKey: Keys.checkUpdates) }
     }
 
     // MARK: - Основные

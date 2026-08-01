@@ -146,6 +146,7 @@ Options: video quality (CRF preset), resolution cap, audio bitrate, JPEG/HEIC qu
 - **Into the window** — the left panel of the converter.
 - **Onto the Dock icon** — files join the queue of the window that is already open. The scene is declared as `Window`, not `WindowGroup`: a group spawned a new window for every file opened, so dropping onto the Dock kept multiplying windows.
 - **Onto the menu bar icon** — the fin next to the clock. Click opens the window, Control-click opens a menu.
+- **From the Finder context menu** — right-click any file and pick **Convert with Shark**, near the bottom of the menu. Nothing to enable and nothing to run: the item is a macOS service declared in `Info.plist`, so it appears once the app has been moved to `/Applications` and opened once. The top part of the context menu (Open, Rename) is reserved by the system for Finder itself; services land in the lower group, alongside items from other apps.
 
 `Info.plist` declares the document type as `public.item`, the root of the type hierarchy, so any file or folder is accepted. The handler rank is `Alternate` so Shark never steals files from the apps that normally own them.
 
@@ -255,7 +256,7 @@ The symlink lives in `Contents/Helpers` rather than next to `Shark` in `Contents
 
 ## Settings
 
-**General** — interface language (System / English / Русский), launch at login, keep running when the window is closed, menu bar icon.
+**General** — interface language (System / English / Русский), launch at login, keep running when the window is closed, menu bar icon, and updates.
 
 Closing the window with the red button drops the app out of the Dock and leaves it in the menu bar; while a window is open the Dock icon is always present. Background mode forces the menu bar icon on — an app with no window and no icon would be unreachable.
 
@@ -270,6 +271,14 @@ Closing the window with the red button drops the app out of the Dock and leaves 
 Sites keep changing, so yt-dlp goes stale faster than everything else. The **Update yt-dlp** button downloads the current release into Application Support rather than into the bundle: editing bundle contents breaks its signature, and the update would be lost on every reinstall.
 
 Engine lookup therefore checks Application Support **first**, treating the bundled binary as the baseline that an update overrides. The download is staged, de-quarantined, ad-hoc signed and executed once before it replaces anything — a truncated download must not leave the app without a working yt-dlp. A **Revert** button restores the bundled version.
+
+### Updating Shark itself
+
+Shark checks GitHub Releases for a newer version, at most once a day and only if **Check for updates on launch** is on. When one exists it offers to install it; **Check for Updates…** in the Shark menu and **Check Now** in Settings ask on demand and answer either way.
+
+The update is the zip asset, not the disk image: the archive is packed with `ditto`, so the symlinks inside the bundle survive unpacking, and installing is a directory replacement rather than a mounted volume and a drag. The download is unpacked next to the current app so the swap happens on one volume, de-quarantined, and executed once before anything is replaced — a truncated download must not leave the machine without an app. Then the app relaunches itself.
+
+If Shark came from Homebrew, the offer says so and points at `brew upgrade --cask shark` instead: replacing the app in place would leave Homebrew's version records pointing at something that is no longer there.
 
 ## Localisation
 

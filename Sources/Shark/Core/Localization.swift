@@ -242,6 +242,35 @@ enum Localization {
         "Open Downloads Folder": "Открыть папку загрузок",
         "Actions": "Действия",
 
+        // MARK: Контекстное меню Finder
+        "Convert with Shark": "Конвертировать через Shark",
+        "No files were passed": "Файлы не переданы",
+
+        // MARK: Обновление приложения
+        "Check for updates on launch": "Проверять обновления при запуске",
+        "Check for Updates…": "Проверить обновления…",
+        "Check Now": "Проверить",
+        "Checking for updates…": "Проверяю обновления…",
+        "Version %@": "Версия %@",
+        "Version %@ is available": "Доступна версия %@",
+        "You have the latest version (%@)": "Установлена последняя версия (%@)",
+        "Shark %@ is available": "Доступен Shark %@",
+        "You have version %@.": "У вас версия %@.",
+        "Update and Restart": "Обновить и перезапустить",
+        "Later": "Позже",
+        "Installing…": "Устанавливаю…",
+        "Shark was installed with Homebrew. Updating in place will confuse it — run brew upgrade --cask shark instead.":
+            "Shark установлен через Homebrew. Обновление поверх собьёт его учёт версий — выполните brew upgrade --cask shark.",
+        "Could not reach GitHub (HTTP %@)": "Не удалось связаться с GitHub (HTTP %@)",
+        "GitHub returned an unexpected answer.": "GitHub ответил неожиданным образом.",
+        "The release has no archive to install.": "В релизе нет архива для установки.",
+        "No write access to %@ — install the update manually.":
+            "Нет прав на запись в %@ — установите обновление вручную.",
+        "The downloaded archive could not be unpacked.":
+            "Не удалось распаковать скачанный архив.",
+        "The downloaded app does not run — the update was not applied.":
+            "Скачанное приложение не запускается — обновление не применено.",
+
         // MARK: Ошибки
         "Operation cancelled": "Операция отменена",
         "File is already in this format": "Файл уже в этом формате",

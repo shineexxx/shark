@@ -53,6 +53,12 @@ for lang in en ru; do
   mkdir -p "$CONTENTS/Resources/$lang.lproj"
   : > "$CONTENTS/Resources/$lang.lproj/Localizable.strings"
 done
+
+# Заголовок пункта в контекстном меню Finder система берёт отсюда, а не из
+# нашей таблицы переводов: службу рисует Finder, и до нашего кода дело ещё
+# не дошло. Язык здесь — системный, настройку языка в приложении он не видит.
+printf '"Convert with Shark" = "Конвертировать через Shark";\n' \
+  > "$CONTENTS/Resources/ru.lproj/Localizable.strings"
 printf 'APPL????' > "$CONTENTS/PkgInfo"
 
 for tool in ffmpeg ffprobe yt-dlp deno; do

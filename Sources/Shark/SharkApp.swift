@@ -34,6 +34,10 @@ private struct AppCommands: Commands {
     @ObservedObject var download: DownloadModel
 
     var body: some Commands {
+        CommandGroup(after: .appInfo) {
+            Button(L("Check for Updates…")) { AppUpdater.shared.checkNow() }
+        }
+
         // Стандартный пункт «Новое окно» приложению не нужен: окно одно.
         CommandGroup(replacing: .newItem) {
             Button(L("Add Files…")) { convert.chooseFiles() }
@@ -121,9 +125,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         !AppSettings.shared.keepRunningInBackground
     }
 
+    /// Службу регистрируем до конца запуска: приложение могли поднять именно
+    /// пунктом контекстного меню, и сообщение придёт сразу после старта.
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        FinderService.shared.install()
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
+
+        AppUpdater.shared.checkOnLaunch()
 
         Task { @MainActor in
             if AppSettings.shared.showMenuBarItem { MenuBarController.shared.install() }

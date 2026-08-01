@@ -32,7 +32,8 @@ enum SharkCLI {
         case "sources", "--list-sources": return await sources(rest)
         case "info":     return await info(rest)
         case "man":      return await manual()
-        case "version", "--version": out("Shark 1.0"); return 0
+        // Версию берём из бандла: зашитая строка врала бы после каждого релиза.
+        case "version", "--version": out("Shark \(AppUpdater.currentVersion)"); return 0
         case "help", "--help", "-h": out(usage); return 0
         default:
             // Пустой вызов — не ошибка, а просьба показать, что умеет инструмент.
