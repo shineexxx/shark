@@ -1,5 +1,7 @@
 # Shark
 
+[Русский](README.ru.md) · **English**
+
 A native macOS file converter and video downloader, written in SwiftUI with a Liquid Glass interface.
 
 **Converts almost anything into almost anything.** Around 120 output formats across audio, video, images and documents, and far more on input — including camera RAW, Photoshop files and legacy office documents. Drop a mixed pile of files in at once: each one is routed to a sensible target on its own.
@@ -336,6 +338,15 @@ To use your own artwork, place `Resources/AppIcon.icns` yourself and remove the 
 ```
 
 Runs 31 real conversions across images, documents, audio and video on generated files and prints a report. No interface is opened, which makes it a fast check after touching the engines.
+
+## Documentation
+
+| | |
+|---|---|
+| [README.ru.md](README.ru.md) | This document in Russian |
+| [`shark man`](Resources/shark.1) | Manual page for the command line tool |
+| [THIRD-PARTY.md](THIRD-PARTY.md) | Licences of the bundled engines |
+| [LICENSE](LICENSE) | MIT |
 
 ## Notes on packaging
 
