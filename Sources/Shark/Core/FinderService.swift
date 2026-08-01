@@ -34,6 +34,10 @@ final class FinderService: NSObject {
     /// показывать не надо — человек просил конвертацию, а не программу.
     var launchedAt = Date()
 
+    /// Запуск случился ради службы. Делегат смотрит сюда, решая, показывать ли
+    /// окно главной сцены, которое он придержал на старте.
+    private(set) var claimedLaunch = false
+
     @objc func convertWithShark(_ pasteboard: NSPasteboard,
                                 userData: String?,
                                 error: AutoreleasingUnsafeMutablePointer<NSString>?) {
@@ -47,15 +51,18 @@ final class FinderService: NSObject {
         // форматом, а не всё приложение. Окно, поднятое сценой при запуске,
         // здесь лишнее: человек просил конвертацию, а не программу.
         let cold = Date().timeIntervalSince(launchedAt) < 5
-        if cold { hideSceneWindows() }
+        if cold {
+            claimedLaunch = true
+            hideSceneWindows()
+        }
 
         NSApp.setActivationPolicy(.regular)
         QuickConvertPanel.shared.present(files: urls, launchedForThis: cold)
     }
 
-    /// Окно главной сцены SwiftUI открывается на запуске само, и до нашего
-    /// решения его не спросить. Закрываем дважды: сообщение службы может
-    /// прийти и до того, как сцена успела показаться.
+    /// Страховка к задержке в делегате: если сцена всё же успела показать
+    /// окно, убираем его. Дважды — сообщение службы может прийти и раньше,
+    /// чем сцена вообще что-то создала.
     private func hideSceneWindows() {
         let close = { @MainActor in
             let ours = QuickConvertPanel.shared.window

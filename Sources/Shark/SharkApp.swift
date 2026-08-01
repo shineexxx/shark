@@ -133,7 +133,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.regular)
-        NSApp.activate(ignoringOtherApps: true)
+        holdMainWindow()
 
         AppUpdater.shared.checkOnLaunch()
 
@@ -146,6 +146,40 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         ) { note in
             guard let window = note.object as? NSWindow else { return }
             MainActor.assumeIsolated { self.windowWillClose(window) }
+        }
+    }
+
+    /// Окно главной сцены SwiftUI открывается на старте само, и решения нашего
+    /// кода не ждёт. Когда приложение поднимают пунктом контекстного меню, оно
+    /// успевало мелькнуть на экране до того, как мы его убирали. Поэтому первые
+    /// доли секунды окно держим скрытым и показываем, только если выяснилось,
+    /// что запуск обычный: служба к этому моменту уже дала о себе знать.
+    private func holdMainWindow() {
+        let hide = { @MainActor in
+            // Окно быстрой конвертации сюда попадать не должно: оно тоже
+            // становится ключевым, и наблюдатель прятал бы ровно то, ради
+            // чего приложение и запустили.
+            let quick = QuickConvertPanel.shared.window
+            for window in NSApp.windows
+            where window.canBecomeMain && window.isVisible && window !== quick {
+                window.orderOut(nil)
+            }
+        }
+        hide()
+        // Сцена может создать окно и позже нас — тогда его перехватит наблюдатель.
+        let observer = NotificationCenter.default.addObserver(
+            forName: NSWindow.didBecomeKeyNotification, object: nil, queue: .main
+        ) { _ in MainActor.assumeIsolated { hide() } }
+
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(350))
+            NotificationCenter.default.removeObserver(observer)
+            guard !FinderService.shared.claimedLaunch else { return }
+            let quick = QuickConvertPanel.shared.window
+            for window in NSApp.windows where window.canBecomeMain && window !== quick {
+                window.makeKeyAndOrderFront(nil)
+            }
+            NSApp.activate(ignoringOtherApps: true)
         }
     }
 
