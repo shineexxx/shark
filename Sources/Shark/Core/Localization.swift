@@ -246,6 +246,13 @@ enum Localization {
         // Сами заголовки пунктов сюда не попадают: их рисует Finder по
         // ServicesMenu.strings. Здесь только то, что показывает приложение.
         "No files were passed": "Файлы не переданы",
+        "Format": "Формат",
+        "Cancel": "Отмена",
+        "More options…": "Больше настроек…",
+        "%@ files": "Файлов: %@",
+        "Saves into “%@”": "Сохранит в «%@»",
+        "The selection mixes different kinds of files. One format cannot fit them all — open the queue to set a target for each.":
+            "В выделении файлы разных типов. Один формат им не подходит — откройте очередь и задайте формат каждому.",
         "No output format was given": "Не указан формат",
         "Conversion failed": "Конвертация не удалась",
         "Converted to %@": "Готово: %@",

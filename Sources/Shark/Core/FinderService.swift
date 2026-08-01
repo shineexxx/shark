@@ -43,93 +43,31 @@ final class FinderService: NSObject {
             return
         }
 
-        // Служба может сработать, когда приложение живёт в строке меню без Dock.
-        NSApp.setActivationPolicy(.regular)
-        NSApp.activate(ignoringOtherApps: true)
-        ConvertModel.shared.add(urls)
-        RootTab.select(.convert)
-    }
-
-    /// Быстрые пункты: формат приходит в `userData` из Info.plist, конвертация
-    /// идёт молча, результат ложится рядом с оригиналом (или в папку из
-    /// настроек), об окончании сообщает уведомление.
-    @objc func convertTo(_ pasteboard: NSPasteboard,
-                         userData: String?,
-                         error: AutoreleasingUnsafeMutablePointer<NSString>?) {
-        let urls = Self.files(on: pasteboard)
-        guard !urls.isEmpty else {
-            error?.pointee = L("No files were passed") as NSString
-            return
-        }
-        guard let target = userData, !target.isEmpty else {
-            error?.pointee = L("No output format was given") as NSString
-            return
-        }
-
-        // Пункт нажали в Finder, значит приложение сейчас на переднем плане
-        // без всякой на то причины. Окно, поднятое ради этого запуска, убираем.
+        // Пункт нажали в Finder — значит, показать надо маленькое окно с
+        // форматом, а не всё приложение. Окно, поднятое сценой при запуске,
+        // здесь лишнее: человек просил конвертацию, а не программу.
         let cold = Date().timeIntervalSince(launchedAt) < 5
-        if cold { hideWindows() }
+        if cold { hideSceneWindows() }
 
-        Task { await run(urls, to: target, quitWhenDone: cold) }
+        NSApp.setActivationPolicy(.regular)
+        QuickConvertPanel.shared.present(files: urls, launchedForThis: cold)
     }
 
-    private func run(_ urls: [URL], to target: String, quitWhenDone: Bool) async {
-        let options = ConvertModel.shared.options
-        let directory = AppSettings.shared.defaultOutputDirectory
-        var done: [URL] = []
-        var failure: String?
-
-        for source in urls {
-            let destination = ConversionEngine.destinationURL(
-                for: source, target: target, in: directory,
-                overwrite: AppSettings.shared.overwriteExisting)
-            do {
-                try await ConversionEngine.convert(source: source, destination: destination,
-                                                   target: target, options: options,
-                                                   progress: { _ in })
-                done.append(destination)
-            } catch {
-                // Оборванная конвертация оставляет обрезанный файл — он хуже,
-                // чем отсутствие файла: его легко принять за готовый.
-                try? FileManager.default.removeItem(at: destination)
-                failure = error.localizedDescription
+    /// Окно главной сцены SwiftUI открывается на запуске само, и до нашего
+    /// решения его не спросить. Закрываем дважды: сообщение службы может
+    /// прийти и до того, как сцена успела показаться.
+    private func hideSceneWindows() {
+        let close = { @MainActor in
+            let ours = QuickConvertPanel.shared.window
+            for window in NSApp.windows where window.canBecomeMain && window !== ours {
+                window.close()
             }
         }
-
-        report(done: done, failure: failure, target: target)
-        // Уведомление показывает система, и своего процесса ему не нужно,
-        // но выйти сразу нельзя: запрос разрешения ещё не успел уйти.
-        if quitWhenDone && !AppSettings.shared.keepRunningInBackground {
-            try? await Task.sleep(for: .seconds(2))
-            NSApp.terminate(nil)
+        close()
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(600))
+            close()
         }
-    }
-
-    private func report(done: [URL], failure: String?, target: String) {
-        if let failure, done.isEmpty {
-            Notifier.post(title: L("Conversion failed"), body: failure)
-            return
-        }
-        guard let last = done.last else { return }
-
-        let title = done.count == 1
-            ? String(format: L("Converted to %@"), target.uppercased())
-            : String(format: L("Converted %@ files to %@"), "\(done.count)",
-                     target.uppercased())
-        Notifier.post(title: title,
-                      body: failure ?? last.deletingLastPathComponent().lastPathComponent)
-
-        if AppSettings.shared.revealWhenDone {
-            NSWorkspace.shared.activateFileViewerSelecting(done)
-        }
-    }
-
-    /// Окно, открытое сценой при запуске, здесь не нужно: пункт быстрого
-    /// формата — это инструмент без интерфейса.
-    private func hideWindows() {
-        for window in NSApp.windows where window.canBecomeMain { window.close() }
-        NSApp.setActivationPolicy(.accessory)
     }
 
     /// Finder кладёт выделение и списком путей, и как file-URL: какой из типов

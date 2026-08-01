@@ -59,14 +59,8 @@ done
 # меню рисует Finder, и до нашего кода дело ещё не дошло. Так же это сделано
 # у Safari. Язык здесь системный — настройку языка внутри приложения Finder
 # не видит и видеть не может.
-cat > "$CONTENTS/Resources/ru.lproj/ServicesMenu.strings" <<'STRINGS'
-"Convert with Shark" = "Конвертировать через Shark";
-"Convert to MP4" = "Конвертировать в MP4";
-"Convert to MP3" = "Конвертировать в MP3";
-"Convert to JPG" = "Конвертировать в JPG";
-"Convert to PNG" = "Конвертировать в PNG";
-"Convert to PDF" = "Конвертировать в PDF";
-STRINGS
+printf '"Convert with Shark" = "Конвертировать через Shark";\n' \
+  > "$CONTENTS/Resources/ru.lproj/ServicesMenu.strings"
 printf 'APPL????' > "$CONTENTS/PkgInfo"
 
 for tool in ffmpeg ffprobe yt-dlp deno; do
