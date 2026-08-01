@@ -1,6 +1,6 @@
 # Shark
 
-[Русский](README.ru.md) · **English**
+**English** · [Русский](README.ru.md)
 
 A native macOS file converter and video downloader, written in SwiftUI with a Liquid Glass interface.
 

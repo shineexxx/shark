@@ -1,6 +1,6 @@
 # Shark
 
-**Русский** · [English](README.md)
+[English](README.md) · **Русский**
 
 Нативное macOS-приложение на SwiftUI с интерфейсом в стиле Liquid Glass: конвертер файлов и загрузчик видео.
 
