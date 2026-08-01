@@ -63,6 +63,8 @@
 			</dict>
 			<key>NSMessage</key>
 			<string>convertTo</string>
+			<key>NSRequiredContext</key>
+			<dict/>
 			<key>NSPortName</key>
 			<string>Shark</string>
 			<key>NSUserData</key>
@@ -85,6 +87,8 @@
 			</dict>
 			<key>NSMessage</key>
 			<string>convertTo</string>
+			<key>NSRequiredContext</key>
+			<dict/>
 			<key>NSPortName</key>
 			<string>Shark</string>
 			<key>NSUserData</key>
@@ -108,6 +112,8 @@
 			</dict>
 			<key>NSMessage</key>
 			<string>convertTo</string>
+			<key>NSRequiredContext</key>
+			<dict/>
 			<key>NSPortName</key>
 			<string>Shark</string>
 			<key>NSUserData</key>
@@ -130,6 +136,8 @@
 			</dict>
 			<key>NSMessage</key>
 			<string>convertTo</string>
+			<key>NSRequiredContext</key>
+			<dict/>
 			<key>NSPortName</key>
 			<string>Shark</string>
 			<key>NSUserData</key>
@@ -152,6 +160,8 @@
 			</dict>
 			<key>NSMessage</key>
 			<string>convertTo</string>
+			<key>NSRequiredContext</key>
+			<dict/>
 			<key>NSPortName</key>
 			<string>Shark</string>
 			<key>NSUserData</key>
@@ -177,10 +187,12 @@
 			<key>NSMenuItem</key>
 			<dict>
 				<key>default</key>
-				<string>Convert with Shark…</string>
+				<string>Convert with Shark</string>
 			</dict>
 			<key>NSMessage</key>
 			<string>convertWithShark</string>
+			<key>NSRequiredContext</key>
+			<dict/>
 			<key>NSPortName</key>
 			<string>Shark</string>
 			<!-- Оба типа сразу: старый список путей и современный file-URL.

@@ -60,7 +60,7 @@ done
 # у Safari. Язык здесь системный — настройку языка внутри приложения Finder
 # не видит и видеть не может.
 cat > "$CONTENTS/Resources/ru.lproj/ServicesMenu.strings" <<'STRINGS'
-"Convert with Shark…" = "Конвертировать через Shark…";
+"Convert with Shark" = "Конвертировать через Shark";
 "Convert to MP4" = "Конвертировать в MP4";
 "Convert to MP3" = "Конвертировать в MP3";
 "Convert to JPG" = "Конвертировать в JPG";
